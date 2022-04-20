@@ -21,17 +21,33 @@ app.get('/holidays', (req, res) => {
 
 app.get('/is-today-holiday', (req, res) => {
 
-    const hoje = new Date();
-    const hojeLocale = hoje.toLocaleDateString("en");
+    const today = new Date();
+    const todayLocale = today.toLocaleDateString("en");
     let holidayResponse = `Não, hoje não é feriado`;
 
     for(let i=0; i<holidays.length; i++){   
-        if(hojeLocale === holidays[i].date){
+        if(todayLocale === holidays[i].date){
             holidayResponse = `Sim, hoje é ${holidays[i].name}`;
         }
     }
 
   res.send(holidayResponse);
+});
+
+app.get('/holidays/:id', (req, res) => {
+    const id = req.params.id;
+    const monthDates = [];
+    const noHoliday = "Não tem feriado nesse mês";
+    let holidayDate = null;
+
+    for(let i=0; i<holidays.length; i++){
+        holidayDate = holidays[i].date.split("/");  
+        if(id === holidayDate[0]){
+            monthDates.push(holidays[i]);
+        }
+    }
+
+  res.send(monthDates.length > 0? monthDates:noHoliday);
 });
 
 app.listen(4000);
